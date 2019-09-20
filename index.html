@@ -93,13 +93,19 @@ function preload ()
     this.load.image('paredegeral', 'assets/mapa1.png');
     this.load.image('groundvertshort2', 'assets/platformvertshort2.png');
     this.load.spritesheet('dude', 'assets/dude2.png', { frameWidth: 15, frameHeight: 20 });
-    //this.load.image('groundvert', 'assets/platformvert.png');
-    this.load.audio('music', 'assets/music.mp3');
+    //this.load.audio('music', 'assets/music.mp3');
     this.load.image('pilar1', 'assets/pilar1.png');
     this.load.image('pilar2', 'assets/pilar2.png');
     this.load.image('pilar3', 'assets/pilar3.png');
     this.load.image('pilar4', 'assets/pilar4.png');
     this.load.image('pilar', 'assets/pilar.png');
+    this.load.image('lake1', 'assets/lake1.png');
+    this.load.image('lake2', 'assets/lake2.png');
+    this.load.image('lake3', 'assets/lake3.png');
+    this.load.image('lake4', 'assets/lake4.png');
+    this.load.image('lakea', 'assets/lakea.png');
+    this.load.image('lakeb', 'assets/lakeb.png');
+    this.load.image('lakec', 'assets/lakec.png');
 }
 
 
@@ -112,11 +118,14 @@ function create ()
 
     this.add.image(512, 310, 'mapa');
 
-    this.soundFX = this.sound.add("music", loop = "true");
-    this.soundFX.play();
+    //this.soundFX = this.sound.add("music", loop = "true");
+    //this.soundFX.play();
 
     //pilares
     pilars = this.physics.add.staticGroup();
+
+    //lago
+    lake = this.physics.add.staticGroup();
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
 
@@ -153,12 +162,19 @@ function create ()
     pilars.create(800, 175, 'pilar');
     pilars.create(798, 493, 'pilar');
     pilars.create(224, 497, 'pilar');
+    lake.create(422, 314, 'lake1');
+    lake.create(422, 230, 'lake2');
+    lake.create(477, 173, 'lake3');
+    lake.create(511, 130, 'lake4');
+    lake.create(374, 485, 'lakea');
+    lake.create(485, 500, 'lakeb');
+    lake.create(513, 553, 'lakec');
 
     //caixas
 
     // The player and its settings
 
-    player = this.physics.add.sprite(600, 400, 'dude');
+    player = this.physics.add.sprite(924, 340, 'dude');
     player.setScale(2)
 
     //  Player physics properties. Give the little guy a slight bounce.
@@ -274,6 +290,7 @@ function create ()
     this.physics.add.collider(player, pilars);
     this.physics.add.collider(stars, platforms);
     this.physics.add.collider(bombs, platforms);
+    this.physics.add.collider(player, lake);
 
 
 
