@@ -46,7 +46,7 @@ var config = {
 
             gravity: { y: 0},
 
-            debug: true
+            debug: false
 
         }
 
@@ -93,7 +93,7 @@ function preload ()
     this.load.image('paredegeral', 'assets/mapa1.png');
     this.load.image('groundvertshort2', 'assets/platformvertshort2.png');
     this.load.spritesheet('dude', 'assets/dude2.png', { frameWidth: 15, frameHeight: 20 });
-    //this.load.audio('music', 'assets/music.mp3');
+    this.load.audio('music', 'assets/music.mp3');
     this.load.image('pilar1', 'assets/pilar1.png');
     this.load.image('pilar2', 'assets/pilar2.png');
     this.load.image('pilar3', 'assets/pilar3.png');
@@ -118,8 +118,8 @@ function create ()
 
     this.add.image(512, 310, 'mapa');
 
-    //this.soundFX = this.sound.add("music", loop = "true");
-    //this.soundFX.play();
+    this.soundFX = this.sound.add("music", loop = "true");
+    this.soundFX.play();
 
     //pilares
     pilars = this.physics.add.staticGroup();
@@ -318,9 +318,43 @@ function update ()
 
     }
 
+    //alteração da velocidade de movimentação diagonal.
 
+    if (cursors.left.isDown && cursors.up.isDown)
+    {
+        player.setVelocityX(-113.137);
+        player.setVelocityY(-113.137);
+        right = false;
+        player.anims.play('left', true);
+    }
 
-    if (cursors.left.isDown)
+    else if (cursors.left.isDown && cursors.down.isDown)
+    {
+        player.setVelocityX(-113.137);
+        player.setVelocityY(113.137);
+        right = false;
+        player.anims.play('left', true);
+    }
+
+    else if (cursors.right.isDown && cursors.up.isDown)
+    {
+        player.setVelocityX(113.137);
+        player.setVelocityY(-113.137);
+        right = true;
+        player.anims.play('right', true);
+    }
+
+    else if (cursors.right.isDown && cursors.down.isDown)
+    {
+        player.setVelocityX(113.137);
+        player.setVelocityY(113.137);
+        right = true;
+        player.anims.play('right', true);
+    }
+    
+    // - fim -
+
+    else if (cursors.left.isDown)
     {
         player.setVelocityX(-160);
         right = false;
@@ -359,7 +393,6 @@ function update ()
         player.setVelocityY(0);
     }
 }
-
 
 
 function collectStar (player, star)
