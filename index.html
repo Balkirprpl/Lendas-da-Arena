@@ -20,7 +20,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0},
-            debug: true
+            debug: false
         }
     },
 
@@ -34,6 +34,7 @@ var config = {
 
 
 var player;
+var player2;
 var stars;
 var bombs;
 var platforms;
@@ -46,12 +47,83 @@ var busy = false;
 var botao;
 var jogar = false;
 var background;
+var passos = false;
+var passosp2 = false;
 
 var game = new Phaser.Game(config);
 
 
 function preload ()
 {
+    var progressBar = this.add.graphics();
+            var progressBox = this.add.graphics();
+            progressBox.fillStyle(0x222222, 0.8);
+            progressBox.fillRect(340, 290, 320, 50);
+            
+            var width = this.cameras.main.width;
+            var height = this.cameras.main.height;
+            var logoText = this.make.text ({
+                x: width / 3.4,
+                y: height / 6-60,
+                text: 'Lendas da Arena',
+                style: {
+                    font: '60px Jazz LET',
+                    fill: '#ffffff'
+                }
+            });
+            var loadingText = this.make.text({
+                x: width / 2,
+                y: height / 2 - 50,
+                text: 'Carregando...',
+                style: {
+                    font: '20px monospace',
+                    fill: '#ffffff'
+                }
+            });
+            loadingText.setOrigin(0.5, 0.5);
+            
+            var percentText = this.make.text({
+                x: width / 2,
+                y: height / 2.6 - 5,
+                text: '0%',
+                style: {
+                    font: '18px monospace',
+                    fill: '#ffffff'
+                }
+            });
+            percentText.setOrigin(0.5, 0.5);
+            
+            var assetText = this.make.text({
+                x: width / 2,
+                y: height / 2 + 50,
+                text: '',
+                style: {
+                    font: '18px monospace',
+                    fill: '#ffffff'
+                }
+            });
+            assetText.setOrigin(0.5, 0.5);
+            this.load.on('progress', function (value) {
+                percentText.setText(parseInt(value * 100) + '%');
+                progressBar.clear();
+                progressBar.fillStyle(0xffffff, 1);
+                progressBar.fillRect(350, 300, 300  * value, 30);
+            });
+            
+            this.load.on('fileprogress', function (file) {
+                assetText.setText('Cafés preparados: ' + file.key);
+            });
+            this.load.on('complete', function () {
+                progressBar.destroy();
+                progressBox.destroy();
+                loadingText.destroy();
+                percentText.destroy();
+                assetText.destroy();
+            });
+            
+            this.load.image('logo', 'assets/logo.png');
+            for (var i = 0; i < 500; i++)
+
     this.load.image('mapa', 'assets/mapaaaa.png');
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
@@ -61,7 +133,6 @@ function preload ()
     this.load.image('paredegeral', 'assets/mapa1.png');
     this.load.image('groundvertshort2', 'assets/platformvertshort2.png');
     this.load.spritesheet('dude', 'assets/dude2.png', { frameWidth: 17, frameHeight: 20 });
-    //this.load.audio('music', 'assets/music.mp3');
     this.load.image('pilar1', 'assets/pilar1.png');
     this.load.image('pilar2', 'assets/pilar2.png');
     this.load.image('pilar3', 'assets/pilar3.png');
@@ -76,6 +147,8 @@ function preload ()
     this.load.image('lakec', 'assets/lakec.png');
     this.load.image('click', 'assets/botao.png');
     this.load.image('background', 'assets/background.png');
+    this.load.audio('footstep', 'assets/footstep.mp3');
+    this.load.audio('music', 'assets/music.mp3');
 }
 
 function create ()
@@ -92,8 +165,24 @@ function create ()
     
     //botao.setScale(0.3);
 
-    //this.soundFX = this.sound.add("music", loop = "true");
-    //this.soundFX.play();
+    //audio de fundo
+    backgroundmusic = this.sound.add("music", {
+        loop: "true",
+        volume: 0.1,
+        });
+    backgroundmusic.play();
+
+
+    //footstep
+    footstep = this.sound.add("footstep", {
+        loop: true,
+        volume: 3,
+        });
+
+    footstep2 = this.sound.add('footstep', {
+        loop: true,
+        volume: 10,
+    })
 
     //pilares
     pilars = this.physics.add.staticGroup();
@@ -105,11 +194,16 @@ function create ()
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = this.physics.add.staticGroup();
 
-    // The player and its settings
+    //sprite personagens
     player = this.physics.add.sprite(924, 340, 'dude');
     player.setScale(2);
     player.setSize(11, 18, true);
     player.setOffset(3, 3);
+
+    player2 = this.physics.add.sprite(100, 340, 'dude');
+    player2.setScale(2);
+    player2.setSize(11, 18, true);
+    player2.setOffset(3, 3);
 
     //  Paredes do mapa, pilares
     platforms.create(713, 40, 'ground');
@@ -146,7 +240,7 @@ function create ()
     //player.setBounce(0,2);
     //player.setCollideWorldBounds(true);
 
-    //  Our player animations, turning, walking left and walking right.
+    //anumações
     this.anims.create({
         key: 'busy',
         frames: this.anims.generateFrameNumbers('dude', {start: 4, end: 6}),
@@ -162,7 +256,7 @@ function create ()
 
     });
 
-    //  Input Events
+    //cursores setinhas
     cursors = this.input.keyboard.createCursorKeys();
 
     //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
@@ -188,10 +282,14 @@ function create ()
     this.physics.add.collider(stars, platforms);
     this.physics.add.collider(bombs, platforms);
     this.physics.add.collider(player, lake);
+    this.physics.add.collider(player2, lake);
+    this.physics.add.collider(player2, platforms);
+    this.physics.add.collider(player2, pilars);
 
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
     this.physics.add.overlap(player, stars, collectStar, null, this);
     this.physics.add.collider(player, bombs, hitBomb, null, this);
+    this.physics.add.overlap(player, player2, colisao, null, this)
 
     //background
     background = this.add.image(512, 310, 'background');
@@ -206,6 +304,10 @@ function create ()
         jogar = true;
     });
     botao.setScale(0.3);
+
+    footstep.play({
+        mute: passos,
+    });
 
 }
 
@@ -227,6 +329,7 @@ function update ()
         player.setVelocityY(-113.137);
         player.anims.play('walk', true);
         player.setFlipX(true);
+        passos = true;
     }
 
     else if (keyA.isDown && keyS.isDown && jogar)
@@ -235,6 +338,7 @@ function update ()
         player.setVelocityY(113.137);
         player.anims.play('walk', true);
         player.setFlipX(true);
+        passos = true;
     }
 
     else if (keyD.isDown && keyW.isDown && jogar)
@@ -243,6 +347,7 @@ function update ()
         player.setVelocityY(-113.137);
         player.anims.play('walk', true);
         player.setFlipX(false);
+        passos = true;
     }
 
     else if (keyD.isDown && keyS.isDown && jogar)
@@ -252,47 +357,164 @@ function update ()
         right = true;
         player.anims.play('walk', true);
         player.setFlipX(false);
+        passos = true;
     }    
     // - fim -
 
+    //direções normais
     else if (keyA.isDown && jogar)
     {
         player.setVelocityX(-160);
         right = false;
         player.anims.play('walk', true);
         player.setFlipX(true);
+        passos = true;
     }
-    else if (keyD.isDown && jogar)
+     else if (keyD.isDown && jogar)
     {
         player.setVelocityX(160);
         player.anims.play('walk', true);
         player.setFlipX(false);
+        passos = true;
     }
 
     else 
     {
         player.setVelocityX(0);
         player.anims.play('busy', true);
-        player.setSize(11, 18, true);
-        player.setOffset(3, 3);
+        //player.setSize(11, 18, true);
+        //player.setOffset(3, 3);
+        passos = false; 
     }
     
     if (keyW.isDown && jogar)
     {
         player.setVelocityY(-160);
-        //player.anims.play('busy', true);
+        passos = true;
     }
     
     else if (keyS.isDown && jogar)
     {
         player.setVelocityY(160);
-        //player.anims.play('busy', true);
+        passos = true;
     }
 
-    else
-    {
+    else{
         player.setVelocityY(0);
     }
+    //fim
+
+
+    //player 2
+
+    if (cursors.up.isDown && cursors.left.isDown && jogar)
+    {
+        player2.setVelocityX(-113.137);
+        player2.setVelocityY(-113.137);
+        player2.anims.play('walk', true);
+        player2.setFlipX(true);
+        passosp2 = true;
+    }
+    else if (cursors.up.isDown && cursors.right.isDown && jogar)
+    {
+        player2.setVelocityX(113.137);
+        player2.setVelocityY(-113.137);
+        player2.anims.play('walk', true);
+        player2.setFlipX(false);
+        passosp2 = true;
+    }
+    else if (cursors.down.isDown && cursors.left.isDown && jogar)
+    {
+        player2.setVelocityX(-113.137);
+        player2.setVelocityY(113.137);
+        player2.anims.play('walk', true);
+        player2.setFlipX(true);
+        passosp2 = true;
+    }
+    else if (cursors.down.isDown && cursors.right.isDown && jogar)
+    {
+        player2.setVelocityX(113.137);
+        player2.setVelocityY(113.137);
+        player2.anims.play('walk', true);
+        player2.setFlipX(false);
+        passosp2 = true;
+    }
+
+    else if (cursors.left.isDown && jogar)
+   
+    {
+        player2.setVelocityX(-160);
+        right = false;
+        player2.anims.play('walk', true);
+        player2.setFlipX(true);
+        passosp2 = true;
+    }
+    else if (cursors.right.isDown && jogar)
+    {
+        player2.setVelocityX(160);
+        player2.anims.play('walk', true);
+        player2.setFlipX(false);
+        passosp2 = true;
+    }
+    else 
+    {
+        player2.setVelocityX(0);
+        player2.anims.play('busy', true);
+        passosp2 = false;
+    }
+
+    if (cursors.up.isDown && jogar)
+    {
+        player2.setVelocityY(-160);
+        passosp2 = true;
+    }
+    
+    else if (cursors.down.isDown && jogar)
+    {
+        player2.setVelocityY(160);
+        passosp2 = true;
+    }
+    else
+    {
+        player2.setVelocityY(0);
+    }
+
+
+    
+    //fim
+
+    if (passos)
+    {   
+        footstep.play({
+            loop: true,
+            volume: 5,
+        });
+    }
+    else
+    {
+        footstep.stop();
+    }
+
+    if (passosp2)
+    {   
+        footstep2.play({
+            loop: true,
+            volume: 5,
+        });
+    }
+    else
+    {
+        footstep2.stop();
+    }
+}
+
+
+function colisao (player, player2)
+{
+    this.physics.pause();
+    player.setTint(0xff0000);
+    logo = this.add.image('512', '310', 'logo');
+    logo.setScale(5);
 }
 
 function collectStar (player, star)
