@@ -49,6 +49,12 @@ var jogar = false;
 var background;
 var passos = false;
 var passosp2 = false;
+var x = 160;
+var xdiag = 113.137;
+var xnegativo = -160;
+var xdiagnegativo = -113.137;
+var boosttime = 0;
+var temposla = 0;
 
 var game = new Phaser.Game(config);
 
@@ -158,11 +164,11 @@ function create ()
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     //  A simple background for our game
     this.add.image(512, 310, 'mapa');
-    
-    
+
     //botao.setScale(0.3);
 
     //audio de fundo
@@ -344,8 +350,8 @@ function update ()
     //alteração da velocidade de movimentação diagonal.
     if (keyA.isDown && keyW.isDown && jogar)
     {
-        player.setVelocityX(-113.137);
-        player.setVelocityY(-113.137);
+        player.setVelocityX(xdiagnegativo);
+        player.setVelocityY(xdiagnegativo);
         player.anims.play('walk', true);
         player.setFlipX(true);
         passos = true;
@@ -353,8 +359,8 @@ function update ()
 
     else if (keyA.isDown && keyS.isDown && jogar)
     {
-        player.setVelocityX(-113.137);
-        player.setVelocityY(113.137);
+        player.setVelocityX(xdiagnegativo);
+        player.setVelocityY(xdiag);
         player.anims.play('walk', true);
         player.setFlipX(true);
         passos = true;
@@ -362,8 +368,8 @@ function update ()
 
     else if (keyD.isDown && keyW.isDown && jogar)
     {
-        player.setVelocityX(113.137);
-        player.setVelocityY(-113.137);
+        player.setVelocityX(xdiag);
+        player.setVelocityY(xdiagnegativo);
         player.anims.play('walk', true);
         player.setFlipX(false);
         passos = true;
@@ -371,8 +377,8 @@ function update ()
 
     else if (keyD.isDown && keyS.isDown && jogar)
     {
-        player.setVelocityX(113.137);
-        player.setVelocityY(113.137);
+        player.setVelocityX(xdiag);
+        player.setVelocityY(xdiag);
         right = true;
         player.anims.play('walk', true);
         player.setFlipX(false);
@@ -383,43 +389,45 @@ function update ()
     //direções normais
     else if (keyA.isDown && jogar)
     {
-        player.setVelocityX(-160);
+        player.setVelocityX(xnegativo);
         right = false;
         player.anims.play('walk', true);
         player.setFlipX(true);
         passos = true;
+        player.setVelocityY(0);
     }
      else if (keyD.isDown && jogar)
     {
-        player.setVelocityX(160);
+        player.setVelocityX(x);
         player.anims.play('walk', true);
         player.setFlipX(false);
         passos = true;
+        player.setVelocityY(0);
     }
 
     else 
     {
         player.setVelocityX(0);
         player.anims.play('busy', true);
-        //player.setSize(11, 18, true);
-        //player.setOffset(3, 3);
-        passos = false; 
     }
     
     if (keyW.isDown && jogar)
     {
-        player.setVelocityY(-160);
+        player.setVelocityY(xnegativo);
         passos = true;
     }
     
     else if (keyS.isDown && jogar)
     {
-        player.setVelocityY(160);
+        player.setVelocityY(x);
         passos = true;
     }
 
-    else{
+    else 
+    {
+        //player.setVelocityX(0);
         player.setVelocityY(0);
+        passos = false; 
     }
     //fim
 
@@ -496,12 +504,11 @@ function update ()
     else
     {
         player2.setVelocityY(0);
-    }
-
-
-    
+    }   
     //fim
 
+
+    //sons de passos
     if (passos)
     {   
         footstep.play({
@@ -524,6 +531,31 @@ function update ()
     else
     {
         footstep2.stop();
+    }
+    //fim
+
+    //boost
+    if (space.isDown && jogar && boosttime > 100)
+    {
+        x = 1000;
+        xnegativo = -1000;
+        xdiag = 601.04;
+        xdiagnegativo = -601.04;
+        temposla ++
+        if (temposla > 5)
+        {
+            boosttime = 0;
+            temposla = 0;
+        }
+    }
+    
+    else
+    {
+        x = 160;
+        xnegativo = -160;
+        xdiag = 113.137;
+        xdiagnegativo = -113.137
+        boosttime ++
     }
 }
 
