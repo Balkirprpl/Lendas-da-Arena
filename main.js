@@ -25,6 +25,12 @@ var xdiagnegativo = -113.137;
 var boosttime = 0;
 var temposla = 0;
 
+//placares
+var scorep1 = 0;
+var scorep2 = 0;
+var score1;
+var score2;
+
 //keyboard
 var keyW;
 var keyA;
@@ -256,6 +262,19 @@ main.create = function ()
     lake.create(485, 500, 'lakeb');
     lake.create(513, 553, 'lakec');
 
+
+
+    //placares
+    score2 = this.add.text(50, 200, scorep2,{
+        fontSize: "32px",
+        fill: "#ffffff",
+    });
+
+    //placares
+    score1 = this.add.text(974, 200, scorep1,{
+        fontSize: "32px",
+        fill: "#ffffff",
+    });
     //animações
     //player1 carinha
     this.anims.create({
@@ -400,7 +419,7 @@ main.update = function ()
     }
     //fim
 
-    console.log(ammo,reloadtime);
+    //console.log(ammo,reloadtime,scorep1,scorep2);
 
     //player 2
 
@@ -520,7 +539,12 @@ main.update = function ()
 
 function colisao ()
 {
-    this.scene.start(gameover);
+    //this.scene.start(gameover);
+    player2.setPosition(100, 340);
+    player.setPosition(924, 340);
+    player2life = 3;
+    scorep2++;
+    score2.setText(scorep2);
 }
 function hit ()
 {
@@ -533,6 +557,8 @@ function hit ()
         player2.setPosition(100, 340);
         player.setPosition(924, 340);
         player2life = 3;
+        scorep1++;
+        score1.setText(scorep1);
     }
 }
 
