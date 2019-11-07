@@ -2,6 +2,9 @@ import {
     gameover
 } from "./gameover.js";
 
+
+console.log("main.js loaded!");
+
 var player;
 var player2;
 var star;
@@ -43,6 +46,7 @@ var space;
 var player;
 var player2;
 var player2life = 3;
+var player2lifeshow;
 
 //mapa
 var pilars;
@@ -55,10 +59,13 @@ var playerBullets;
 var enemyBullets;
 var hittarget;
 var ammo = 6;
+var ammoshow;
 var reload = false;
 var reloadtime = 176;
 //reticula
 var reticle;
+
+var button;
 
 var main = new Phaser.Scene("Main");
 
@@ -144,6 +151,7 @@ main.preload = function ()
     this.load.image('lakec', 'assets/lakec.png');
     this.load.image('click', 'assets/botao.png');
     this.load.image('background', 'assets/background.png');
+    this.load.spritesheet('fullscreen', 'assets/fullscreen.png', { frameWidth: 64, frameHeight:64 });
     this.load.audio('footstep', 'assets/footstep.mp3');
     this.load.audio('music', 'assets/music.mp3');
 }
@@ -161,10 +169,9 @@ main.create = function ()
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHTSHIFT);
     space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    //keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-
+    
 
     //tiro
     playerBullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
@@ -177,6 +184,7 @@ main.create = function ()
     {
         bullet.fire(player, reticle);
         ammo = ammo - 1;
+        ammoshow.setText("Munição:" + ammo);
     }
     }, this);
 
@@ -189,10 +197,6 @@ main.create = function ()
             main.input.mouse.releasePointerLock();
     }, 0, this);
 
-
-    //retícula
-    reticle = this.physics.add.sprite(900, 300, 'bomb');
-
     this.input.on('pointermove', function (pointer) {
         if (this.input.mouse.locked)
         {
@@ -201,7 +205,6 @@ main.create = function ()
         }
     }, this);
 
-    reticle.setCollideWorldBounds(true);
 
     
 
@@ -262,7 +265,49 @@ main.create = function ()
     lake.create(485, 500, 'lakeb');
     lake.create(513, 553, 'lakec');
 
+    //Fullscreen
+    var button = this.add.image(1030 - 16, 16, "fullscreen", 0).setOrigin(1, 0).setInteractive();
+    // Ao clicar no botão de tela cheia
+  button.on(
+    "pointerup",
+    function() {
+      if (this.scale.isFullscreen) {
+        button.setFrame(0);
+        this.scale.stopFullscreen();
+      } else {
+        button.setFrame(1);
+        this.scale.startFullscreen();
+      }
+    },
+    this
+  );
 
+    var FKey = this.input.keyboard.addKey("F");
+    FKey.on(
+    "down",
+    function() {
+      if (this.scale.isFullscreen) {
+        button.setFrame(0);
+        this.scale.stopFullscreen();
+      } else {
+        button.setFrame(1);
+        this.scale.startFullscreen();
+      }
+    },
+    this
+  );
+
+    //munição txt
+    ammoshow = this.add.text(934, 500, "Munição:" + ammo,{
+        fontSize: "16px",
+        fill: "#ffffff",
+    });
+
+    //vida player2
+    player2lifeshow = this.add.text(10, 500, "Vida:" + player2life,{
+        fontSize: "16px",
+        fill: "#ffffff"
+    })
 
     //placares
     score2 = this.add.text(50, 200, scorep2,{
@@ -306,6 +351,10 @@ main.create = function ()
         repeat: -1
     });
 
+    //retícula
+    reticle = this.physics.add.sprite(900, 300, 'bomb');
+    reticle.setCollideWorldBounds(true);
+
     //cursores setinhas
     cursors = this.input.keyboard.createCursorKeys();
 
@@ -338,38 +387,38 @@ main.update = function ()
     //alteração da velocidade de movimentação diagonal.
     if (keyA.isDown && keyW.isDown)
     {
-        player.setVelocityX(xdiagnegativo);
-        player.setVelocityY(xdiagnegativo);
-        player.anims.play('walk', true);
-        player.setFlipX(true);
+        player2.setVelocityX(xdiagnegativo);
+        player2.setVelocityY(xdiagnegativo);
+        player2.anims.play('walk', true);
+        player2.setFlipX(true);
         passos = true;
     }
 
     else if (keyA.isDown && keyS.isDown)
     {
-        player.setVelocityX(xdiagnegativo);
-        player.setVelocityY(xdiag);
-        player.anims.play('walk', true);
-        player.setFlipX(true);
+        player2.setVelocityX(xdiagnegativo);
+        player2.setVelocityY(xdiag);
+        player2.anims.play('walk', true);
+        player2.setFlipX(true);
         passos = true;
     }
 
     else if (keyD.isDown && keyW.isDown)
     {
-        player.setVelocityX(xdiag);
-        player.setVelocityY(xdiagnegativo);
-        player.anims.play('walk', true);
-        player.setFlipX(false);
+        player2.setVelocityX(xdiag);
+        player2.setVelocityY(xdiagnegativo);
+        player2.anims.play('walk', true);
+        player2.setFlipX(false);
         passos = true;
     }
 
     else if (keyD.isDown && keyS.isDown)
     {
-        player.setVelocityX(xdiag);
-        player.setVelocityY(xdiag);
+        player2.setVelocityX(xdiag);
+        player2.setVelocityY(xdiag);
         right = true;
-        player.anims.play('walk', true);
-        player.setFlipX(false);
+        player2.anims.play('walk', true);
+        player2.setFlipX(false);
         passos = true;
     }    
     // - fim -
@@ -377,44 +426,44 @@ main.update = function ()
     //direções normais
     else if (keyA.isDown)
     {
-        player.setVelocityX(xnegativo);
+        player2.setVelocityX(xnegativo);
         right = false;
-        player.anims.play('walk', true);
-        player.setFlipX(true);
+        player2.anims.play('walk', true);
+        player2.setFlipX(true);
         passos = true;
-        player.setVelocityY(0);
+        player2.setVelocityY(0);
     }
      else if (keyD.isDown)
     {
-        player.setVelocityX(x);
-        player.anims.play('walk', true);
-        player.setFlipX(false);
+        player2.setVelocityX(x);
+        player2.anims.play('walk', true);
+        player2.setFlipX(false);
         passos = true;
-        player.setVelocityY(0);
+        player2.setVelocityY(0);
     }
 
     else 
     {
-        player.setVelocityX(0);
-        player.anims.play('busy', true);
+        player2.setVelocityX(0);
+        player2.anims.play('busy', true);
     }
     
     if (keyW.isDown)
     {
-        player.setVelocityY(xnegativo);
+        player2.setVelocityY(xnegativo);
         passos = true;
     }
     
     else if (keyS.isDown)
     {
-        player.setVelocityY(x);
+        player2.setVelocityY(x);
         passos = true;
     }
 
     else 
     {
         //player.setVelocityX(0);
-        player.setVelocityY(0);
+        player2.setVelocityY(0);
         passos = false; 
     }
     //fim
@@ -425,74 +474,74 @@ main.update = function ()
 
     if (cursors.up.isDown && cursors.left.isDown)
     {
-        player2.setVelocityX(-113.137);
-        player2.setVelocityY(-113.137);
-        player2.anims.play('walk2', true);
-        player2.setFlipX(true);
+        player.setVelocityX(-113.137);
+        player.setVelocityY(-113.137);
+        player.anims.play('walk2', true);
+        player.setFlipX(true);
         passosp2 = true;
     }
     else if (cursors.up.isDown && cursors.right.isDown)
     {
-        player2.setVelocityX(113.137);
-        player2.setVelocityY(-113.137);
-        player2.anims.play('walk2', true);
-        player2.setFlipX(false);
+        player.setVelocityX(113.137);
+        player.setVelocityY(-113.137);
+        player.anims.play('walk2', true);
+        player.setFlipX(false);
         passosp2 = true;
     }
     else if (cursors.down.isDown && cursors.left.isDown)
     {
-        player2.setVelocityX(-113.137);
-        player2.setVelocityY(113.137);
-        player2.anims.play('walk2', true);
-        player2.setFlipX(true);
+        player.setVelocityX(-113.137);
+        player.setVelocityY(113.137);
+        player.anims.play('walk2', true);
+        player.setFlipX(true);
         passosp2 = true;
     }
     else if (cursors.down.isDown && cursors.right.isDown)
     {
-        player2.setVelocityX(113.137);
-        player2.setVelocityY(113.137);
-        player2.anims.play('walk2', true);
-        player2.setFlipX(false);
+        player.setVelocityX(113.137);
+        player.setVelocityY(113.137);
+        player.anims.play('walk2', true);
+        player.setFlipX(false);
         passosp2 = true;
     }
 
     else if (cursors.left.isDown)
    
     {
-        player2.setVelocityX(-160);
+        player.setVelocityX(-160);
         right = false;
-        player2.anims.play('walk2', true);
-        player2.setFlipX(true);
+        player.anims.play('walk2', true);
+        player.setFlipX(true);
         passosp2 = true;
     }
     else if (cursors.right.isDown)
     {
-        player2.setVelocityX(160);
-        player2.anims.play('walk2', true);
-        player2.setFlipX(false);
+        player.setVelocityX(160);
+        player.anims.play('walk2', true);
+        player.setFlipX(false);
         passosp2 = true;
     }
     else 
     {
-        player2.setVelocityX(0);
-        player2.anims.play('busy2', true);
+        player.setVelocityX(0);
+        player.anims.play('busy2', true);
         passosp2 = false;
     }
 
     if (cursors.up.isDown)
     {
-        player2.setVelocityY(-160);
+        player.setVelocityY(-160);
         passosp2 = true;
     }
     
     else if (cursors.down.isDown)
     {
-        player2.setVelocityY(160);
+        player.setVelocityY(160);
         passosp2 = true;
     }
     else
     {
-        player2.setVelocityY(0);
+        player.setVelocityY(0);
     }   
     //fim
 
@@ -520,6 +569,7 @@ main.update = function ()
         boosttime ++;
     }
 
+    //reload
     if (keyR.isDown && ammo <= 5)
     {
         reload = true
@@ -532,6 +582,7 @@ main.update = function ()
             ammo = 6;
             reloadtime = 176;
             reload = false;
+            ammoshow.setText("Munição:" + ammo);
         }
     }
 }
@@ -550,7 +601,7 @@ function hit ()
 {
     hittarget = true;
     player2life = player2life - 1;
-    console.log(player2life);
+    player2lifeshow.setText("Vida:" + player2life);
     if (player2life <= 0 )
     {
         //this.scene.start(gameover)
@@ -559,6 +610,7 @@ function hit ()
         player2life = 3;
         scorep1++;
         score1.setText(scorep1);
+        player2lifeshow.setText("Vida:" + player2life);
     }
 }
 

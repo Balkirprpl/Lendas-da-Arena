@@ -1,5 +1,7 @@
 import {main} from "./main.js";
 
+console.log("start.js loaded!");
+
 var start = new Phaser.Scene("SceneA");
 var pointer;
 

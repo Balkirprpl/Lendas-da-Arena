@@ -8,7 +8,7 @@ import {
     gameover
 } from "./gameover.js";
 
-console.log("10");
+console.log("index.js loaded!");
 
 var config = {
     type: Phaser.AUTO,
@@ -20,9 +20,14 @@ var config = {
             gravity: {
                 y: 0
             },
-            debug: true
+            debug: false
         }
     },
+    scale: {
+        mode: Phaser.Scale.FIT,
+        parent: "game",
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+      },
     scene: [start, main, gameover]
 }
 

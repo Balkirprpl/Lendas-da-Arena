@@ -2,6 +2,8 @@ import {
     start
 } from "./start.js";
 
+console.log("gameover.js loaded!");
+
 var gameover = new Phaser.Scene("gameOver");
 var space;
 
