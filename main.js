@@ -30,11 +30,13 @@ var keyW;
 var keyA;
 var keyD;
 var keyS;
+var keyR
 var space;
 
 //jogadores
 var player;
 var player2;
+var player2life = 3;
 
 //mapa
 var pilars;
@@ -46,6 +48,9 @@ var platforms;
 var playerBullets;
 var enemyBullets;
 var hittarget;
+var ammo = 6;
+var reload = false;
+var reloadtime = 176;
 //reticula
 var reticle;
 
@@ -87,7 +92,7 @@ var Bullet = new Phaser.Class({
             }
     
             this.rotation = shooter.rotation; // angle bullet with shooters rotation
-            this.born = 1700; // Time since new bullet spawned
+            this.born = 0; // Time since new bullet spawned
         },
     
         // Updates the position of the bullet each cycle
@@ -97,10 +102,13 @@ var Bullet = new Phaser.Class({
             this.y += this.ySpeed * delta;
             this.born += delta;
             
-            if (this.born > 1800 || hittarget)
+            if (this.born > 300 || hittarget)
             {
-                this.setActive(false);
-                this.setVisible(false);
+                //this.setActive(false);
+                //this.setVisible(false);
+                //this.body.setEnable(false);
+                hittarget = false;
+                this.destroy();
             }
         }
     });
@@ -147,7 +155,10 @@ main.create = function ()
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    //keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+
 
     //tiro
     playerBullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
@@ -156,9 +167,10 @@ main.create = function ()
     this.input.on('pointerdown', function (pointer, time, lastFired) {
         var bullet = playerBullets.get().setActive(true).setVisible(true);
 
-    if (bullet)
+    if (bullet && ammo >= 1 && !reload)
     {
         bullet.fire(player, reticle);
+        ammo = ammo - 1;
     }
     }, this);
 
@@ -201,11 +213,13 @@ main.create = function ()
     star = this.physics.add.staticGroup();
 
     //sprite personagens
+    //player1
     player = this.physics.add.sprite(924, 340, 'dude');
     player.setScale(2);
     player.setSize(11, 18, true);
     player.setOffset(3, 3);
 
+    //player2
     player2 = this.physics.add.sprite(100, 340, 'dude');
     player2.setScale(2);
     player2.setSize(11, 18, true);
@@ -386,6 +400,7 @@ main.update = function ()
     }
     //fim
 
+    console.log(ammo,reloadtime);
 
     //player 2
 
@@ -485,7 +500,23 @@ main.update = function ()
         xdiagnegativo = -113.137;
         boosttime ++;
     }
+
+    if (keyR.isDown && ammo <= 5)
+    {
+        reload = true
+    }
+    else if (reload)
+    {
+        reloadtime --;
+        if (reloadtime <= 0 )
+        {
+            ammo = 6;
+            reloadtime = 176;
+            reload = false;
+        }
+    }
 }
+
 
 function colisao ()
 {
@@ -494,7 +525,15 @@ function colisao ()
 function hit ()
 {
     hittarget = true;
-    hittarget = false;
+    player2life = player2life - 1;
+    console.log(player2life);
+    if (player2life <= 0 )
+    {
+        //this.scene.start(gameover)
+        player2.setPosition(100, 340);
+        player.setPosition(924, 340);
+        player2life = 3;
+    }
 }
 
 
