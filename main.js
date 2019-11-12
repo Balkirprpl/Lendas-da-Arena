@@ -39,7 +39,7 @@ var keyW;
 var keyA;
 var keyD;
 var keyS;
-var keyR
+var ENTER;
 var space;
 
 //jogadores
@@ -58,6 +58,7 @@ var platforms;
 var playerBullets;
 var enemyBullets;
 var hittarget;
+var hitwall;
 var ammo = 6;
 var ammoshow;
 var reload = false;
@@ -115,12 +116,13 @@ var Bullet = new Phaser.Class({
             this.y += this.ySpeed * delta;
             this.born += delta;
             
-            if (this.born > 300 || hittarget)
+            if (this.born > 300 || hittarget || hitwall)
             {
                 //this.setActive(false);
                 //this.setVisible(false);
                 //this.body.setEnable(false);
                 hittarget = false;
+                hitwall = false;
                 this.destroy();
             }
         }
@@ -169,7 +171,7 @@ main.create = function ()
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHTSHIFT);
+    ENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
 
@@ -371,6 +373,8 @@ main.create = function ()
     //function collider
     this.physics.add.overlap(player, player2, colisao, null, this);
     this.physics.add.overlap(player2, playerBullets, hit, null, this);
+    this.physics.add.overlap(platforms, playerBullets, hitparede, null, this);
+    this.physics.add.overlap(pilars, playerBullets, hitparede, null, this);
 }
 
 main.update = function () 
@@ -570,7 +574,7 @@ main.update = function ()
     }
 
     //reload
-    if (keyR.isDown && ammo <= 5)
+    if (ENTER.isDown && ammo <= 5)
     {
         reload = true
     }
@@ -587,6 +591,10 @@ main.update = function ()
     }
 }
 
+function hitparede ()
+{
+    hitwall = true;
+}
 
 function colisao ()
 {
