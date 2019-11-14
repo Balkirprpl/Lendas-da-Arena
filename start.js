@@ -3,7 +3,7 @@ import {main} from "./main.js";
 console.log("start.js loaded!");
 
 var start = new Phaser.Scene("SceneA");
-var pointer;
+var space;
 
 start.preload = function () {
     this.load.image("background", "assets/background.png");
@@ -11,11 +11,11 @@ start.preload = function () {
 
 start.create = function () {
     this.add.image(512, 310, "background");
-    pointer = this.input.activePointer;
+    space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 };
 
 start.update = function () {
-    if (pointer.isDown) {
+    if (space.isDown) {
         this.scene.start(main);
     }
 }

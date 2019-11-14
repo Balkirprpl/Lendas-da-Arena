@@ -41,6 +41,7 @@ var keyD;
 var keyS;
 var ENTER;
 var space;
+var ingame = false;
 
 //jogadores
 var player;
@@ -63,6 +64,7 @@ var ammo = 6;
 var ammoshow;
 var reload = false;
 var reloadtime = 176;
+var reloadshow;
 //reticula
 var reticle;
 
@@ -182,7 +184,7 @@ main.create = function ()
     this.input.on('pointerdown', function (pointer, time, lastFired) {
         var bullet = playerBullets.get().setActive(true).setVisible(true);
 
-    if (bullet && ammo >= 1 && !reload)
+    if (bullet && ammo >= 1 && !reload && ingame)
     {
         bullet.fire(player, reticle);
         ammo = ammo - 1;
@@ -192,11 +194,13 @@ main.create = function ()
 
     this.input.on('pointerdown', function () {
         main.input.mouse.requestPointerLock();
+        ingame = true;
     });
 
     this.input.keyboard.on('keydown_Q', function (event) {
         if (main.input.mouse.locked)
             main.input.mouse.releasePointerLock();
+            ingame = false;
     }, 0, this);
 
     this.input.on('pointermove', function (pointer) {
@@ -300,13 +304,17 @@ main.create = function ()
   );
 
     //munição txt
-    ammoshow = this.add.text(934, 500, "Munição:" + ammo,{
+    ammoshow = this.add.text(934, 430, "Munição:" + ammo,{
         fontSize: "16px",
         fill: "#ffffff",
     });
 
+    reloadshow = this.add.text(934, 450, "",{
+        fontSize: "16px",
+        fill: "#ffffff",
+    });
     //vida player2
-    player2lifeshow = this.add.text(10, 500, "Vida:" + player2life,{
+    player2lifeshow = this.add.text(10, 430, "Vida:" + player2life,{
         fontSize: "16px",
         fill: "#ffffff"
     })
@@ -587,6 +595,22 @@ main.update = function ()
             reloadtime = 176;
             reload = false;
             ammoshow.setText("Munição:" + ammo);
+            reloadshow.setText("");
+        }
+
+        else if (reloadtime <= 58)
+        {
+            reloadshow.setText("1");
+        }
+        
+        else if (reloadtime <= 116)
+        {
+            reloadshow.setText("2");
+        }
+
+        else if (reloadtime <= 175)
+        {
+            reloadshow.setText("3");
         }
     }
 }
