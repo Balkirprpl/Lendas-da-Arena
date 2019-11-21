@@ -133,6 +133,7 @@ var Bullet = new Phaser.Class({
 main.preload = function () 
 {
     this.load.image('mapa', 'assets/mapaaaa.png');
+    this.load.image('mapa1', 'assets/mapa1.png');
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
@@ -246,11 +247,11 @@ main.create = function ()
     platforms.create(310, 610, 'ground');
     platforms.create(713, 610, 'ground');
     platforms.create(-100, 300, 'ground');
-    platforms.create(-100, 385, 'ground');
+    platforms.create(-100, 415, 'ground');
     platforms.create(1124, 300, 'ground');
-    platforms.create(1124, 385, 'ground');
-    platforms.create(90, 528, 'groundvert');
-    platforms.create(934, 528, 'groundvert');
+    platforms.create(1124, 415, 'ground');
+    platforms.create(90, 558, 'groundvert');
+    platforms.create(934, 558, 'groundvert');
     platforms.create(90, 157, 'groundvert');
     platforms.create(934, 157, 'groundvert');
     platforms.create(-15, 310, 'groundvert');
@@ -270,6 +271,7 @@ main.create = function ()
     lake.create(374, 485, 'lakea');
     lake.create(485, 500, 'lakeb');
     lake.create(513, 553, 'lakec');
+    this.add.image(512, 310, 'mapa1');
 
     //Fullscreen
     var button = this.add.image(1030 - 16, 16, "fullscreen", 0).setOrigin(1, 0).setInteractive();
