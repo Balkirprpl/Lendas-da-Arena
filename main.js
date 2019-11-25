@@ -638,7 +638,7 @@ function hit ()
     player2lifeshow.setText("Vida:" + player2life);
     if (player2life <= 0 )
     {
-        //this.scene.start(gameover)
+        this.scene.start(gameover);
         player2.setPosition(100, 340);
         player.setPosition(924, 340);
         player2life = 3;
