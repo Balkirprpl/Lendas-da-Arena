@@ -1,6 +1,10 @@
 import {
     gameover
 } from "./gameover.js";
+import {
+    tempo, pontos
+} from "./start.js";
+
 
 
 console.log("main.js loaded!");
@@ -541,7 +545,6 @@ main.update = function ()
         player.anims.play('busy2', true);
         passosp2 = false;
     }
-
     if (cursors.up.isDown)
     {
         player.setVelocityY(-160);
@@ -631,6 +634,7 @@ function colisao ()
     scorep2++;
     score2.setText(scorep2);
 }
+
 function hit ()
 {
     hittarget = true;
