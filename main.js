@@ -16,7 +16,6 @@ var bombs;
 var platforms;
 var cursors;
 var score = 0;
-var gameOver = false;
 var scoreText;
 var right = false;
 var busy = false;
@@ -31,6 +30,10 @@ var xnegativo = -160;
 var xdiagnegativo = -113.137;
 var boosttime = 0;
 var temposla = 0;
+
+//timer
+var timer;
+var texttimer;
 
 //placares
 var scorep1 = 0;
@@ -163,6 +166,11 @@ main.preload = function ()
     this.load.spritesheet('fullscreen', 'assets/fullscreen.png', { frameWidth: 64, frameHeight:64 });
     this.load.audio('footstep', 'assets/footstep.mp3');
     this.load.audio('music', 'assets/music.mp3');
+
+    scorep1 = 0;
+    scorep2 = 0;
+    ammo = 6;
+    player2life = 3;
 }
 
 main.create = function () 
@@ -389,19 +397,15 @@ main.create = function ()
     this.physics.add.overlap(player2, playerBullets, hit, null, this);
     this.physics.add.overlap(platforms, playerBullets, hitparede, null, this);
     this.physics.add.overlap(pilars, playerBullets, hitparede, null, this);
+
+    //timer
+    texttimer = this.add.text(32, 32);
+    timer = this.time.delayedCall(tempo, gamewin, [], this);
+    
 }
 
 main.update = function () 
 {
-    if (gameOver)
-    {
-        return;
-    }
-    //if (jogar)
-    //{
-    //    background.disableBody(true, true);
-    //}
-
     //alteração da velocidade de movimentação diagonal.
     if (keyA.isDown && keyW.isDown)
     {
@@ -627,7 +631,6 @@ function hitparede ()
 
 function colisao ()
 {
-    //this.scene.start(gameover);
     player2.setPosition(100, 340);
     player.setPosition(924, 340);
     player2life = 3;
@@ -642,7 +645,6 @@ function hit ()
     player2lifeshow.setText("Vida:" + player2life);
     if (player2life <= 0 )
     {
-        this.scene.start(gameover);
         player2.setPosition(100, 340);
         player.setPosition(924, 340);
         player2life = 3;
@@ -652,6 +654,12 @@ function hit ()
     }
 }
 
+
+function gamewin()
+{
+    main.input.mouse.releasePointerLock();
+    this.scene.start(gameover);
+}
 
 export {
     main

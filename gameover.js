@@ -4,23 +4,33 @@ import {
 
 console.log("gameover.js loaded!");
 
+
+var jogarnovamente = false;
+var botao;
 var gameover = new Phaser.Scene("gameOver");
-var space;
 
 gameover.preload = function () 
 {
     this.load.image('parabens', 'assets/logo.png');
+    this.load.image("click", "assets/cliqueaqui.png");
+    jogarnovamente = false;
 }
 gameover.create = function () 
 {
     this.add.image(512, 310, 'parabens');
-    space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    botao = this.physics.add.sprite(512, 512, 'click').setInteractive().setScale(0.3).on('pointerdown', playagain);
 }
 gameover.update = function () 
 {
-    if (space.isDown) {
+    if (jogarnovamente)
+    {
         this.scene.start(start);
     }
+}
+
+function playagain()
+{
+    jogarnovamente = true;
 }
 
 export {gameover};
