@@ -34,6 +34,7 @@ var temposla = 0;
 //timer
 var timer;
 var texttimer;
+var remainingtime;
 
 //placares
 var scorep1 = 0;
@@ -397,15 +398,30 @@ main.create = function ()
     this.physics.add.overlap(player2, playerBullets, hit, null, this);
     this.physics.add.overlap(platforms, playerBullets, hitparede, null, this);
     this.physics.add.overlap(pilars, playerBullets, hitparede, null, this);
-
-    //timer
-    texttimer = this.add.text(32, 32);
-    timer = this.time.delayedCall(tempo, gamewin, [], this);
     
+    jogar = true;
+
+    if (tempo > 0)
+    {this.time = {
+        text: this.add.text(480, 30, tempo/1000, { fontSize: "32px", fill: "#000" }),
+        event: this.time.addEvent({
+          delay: tempo,
+          callback: gamewin,
+          callbackScope: this
+        })
+      };
+    }
 }
 
 main.update = function () 
 {
+    if (tempo > 0) {
+        let timeRemaining = tempo/1000 - Math.round(this.time.event.getElapsedSeconds());
+        let minutes = Math.floor(timeRemaining / 60);
+        let seconds = Math.round(timeRemaining % 60);
+        seconds = (seconds < 10 ? "0" : "") + seconds;
+        this.time.text.setText(minutes + ":" + seconds);
+      }
     //alteração da velocidade de movimentação diagonal.
     if (keyA.isDown && keyW.isDown)
     {

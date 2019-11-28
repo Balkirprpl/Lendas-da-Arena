@@ -4,7 +4,6 @@ import {
 
 console.log("gameover.js loaded!");
 
-
 var jogarnovamente = false;
 var botao;
 var gameover = new Phaser.Scene("gameOver");

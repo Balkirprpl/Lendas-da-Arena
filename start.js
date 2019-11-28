@@ -57,7 +57,7 @@ function changetime ()
     }
     else
     {
-        tempo = 30000;
+        tempo = 0;
         temposhow.setText(tempo/1000 + "s");
     }
 }
