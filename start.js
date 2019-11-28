@@ -1,4 +1,4 @@
-import {main} from "./main.js";
+import { main } from "./main.js";
 
 console.log("start.js loaded!");
 
@@ -15,7 +15,7 @@ var botaoup;
 var botaodown;
 var maxpoints = 5;
 
-start.preload = function () {
+start.preload = function() {
     this.load.image("background", "assets/background.png");
     this.load.image("click", "assets/cliqueaqui.png");
     this.load.image("arrow", "assets/arrow.png");
@@ -24,62 +24,74 @@ start.preload = function () {
     jogar = false;
 };
 
-start.create = function () {
+start.create = function() {
     this.add.image(512, 310, "background");
     space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    botao = this.physics.add.sprite(512, 312, 'click').setInteractive().setScale(0.3).on('pointerdown', pointer);
-    botaodown = this.physics.add.sprite(874, 300, 'arrow').setInteractive().setScale(0.05).setAngle(180).on('pointerdown', scoredown);
-    botaoup = this.physics.add.sprite(874, 260, 'arrow').setInteractive().setScale(0.05).on('pointerdown', scoreup);
+    botao = this.physics.add
+        .sprite(512, 312, "click")
+        .setInteractive()
+        .setScale(0.3)
+        .on("pointerdown", pointer);
+    botaodown = this.physics.add
+        .sprite(874, 300, "arrow")
+        .setInteractive()
+        .setScale(0.05)
+        .setAngle(180)
+        .on("pointerdown", scoredown);
+    botaoup = this.physics.add
+        .sprite(874, 260, "arrow")
+        .setInteractive()
+        .setScale(0.05)
+        .on("pointerdown", scoreup);
     cursors = this.input.keyboard.createCursorKeys();
-    this.add.sprite(835,280, 'alvo').setScale(0.1);
-    this.add.sprite(835,200, 'relogio').setScale(0.027).setInteractive().on('pointerdown', changetime);
-    temposhow = this.add.text(825, 193, tempo/1000 + "s", { fontFamily: 'ComicSans'});
-    pontosshow = this.add.text(828, 273, pontos, { fontFamily: 'ComicSans'});
+    this.add.sprite(835, 280, "alvo").setScale(0.1);
+    this.add
+        .sprite(835, 200, "relogio")
+        .setScale(0.027)
+        .setInteractive()
+        .on("pointerdown", changetime);
+    temposhow = this.add.text(825, 193, tempo / 1000 + "s", {
+        fontFamily: "ComicSans"
+    });
+    pontosshow = this.add.text(828, 273, pontos, {
+        fontFamily: "ComicSans"
+    });
 };
 
-start.update = function () {
-    if (jogar)
-    {
+start.update = function() {
+    if (jogar) {
         this.scene.start(main);
-    }  
+    }
 };
 
-function pointer ()
-{
+function pointer() {
     jogar = true;
 }
 
-function changetime ()
-{
-    if (tempo < 179000)
-    {tempo = tempo + 30000
-    temposhow.setText(tempo/1000 + "s");
-    }
-    else
-    {
+function changetime() {
+    if (tempo < 179000) {
+        tempo = tempo + 30000;
+        temposhow.setText(tempo / 1000 + "s");
+    } else {
         tempo = 0;
-        temposhow.setText(tempo/1000 + "s");
+        temposhow.setText(tempo / 1000 + "s");
     }
 }
 
-function scoreup ()
-{
-    if (pontos <= 59)
-    {
-    pontos = pontos + 5;
-    pontosshow.setText(pontos);
+function scoreup() {
+    if (pontos <= 59) {
+        pontos = pontos + 5;
+        pontosshow.setText(pontos);
     }
 }
 
-function scoredown ()
-{
-    if (pontos > 0)
-    {
-    pontos = pontos - 5;
-    pontosshow.setText(pontos);
+function scoredown() {
+    if (pontos > 0) {
+        pontos = pontos - 5;
+        pontosshow.setText(pontos);
     }
 }
 
-export {start};
-export {pontos};
-export {tempo};
+export { start };
+export { pontos };
+export { tempo };
