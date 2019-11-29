@@ -25,9 +25,9 @@ var xdiagnegativo = -113.137;
 var boosttime = 0;
 var temposla = 0;
 
-//max score
-var player2win;
+//max score win
 var player1win;
+var tie;
 
 //timer
 var timer;
@@ -441,7 +441,6 @@ main.update = function() {
     if (pontos <= scorep2 || pontos <= scorep1) {
         gamewin();
     }
-    console.log("vida: ", player2life);
     if (tempo > 0) {
         let timeRemaining =
             tempo / 1000 - Math.round(timer.event.getElapsedSeconds());
@@ -602,6 +601,7 @@ main.update = function() {
             reloadshow.setText("3");
         }
     }
+    console.log(scorep1,scorep2)
 };
 
 function hitparede() {
@@ -636,3 +636,5 @@ function gamewin() {
 }
 
 export { main };
+export { scorep1 };
+export { scorep2 };
