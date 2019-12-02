@@ -17,8 +17,10 @@ var maxpoints = 5;
 
 start.preload = function() {
     this.load.image("background", "assets/background.png");
-    this.load.image("click", "assets/cliqueaqui.png");
-    this.load.image("arrow", "assets/arrow.png");
+    this.load.image("click", "assets/botao1.png");
+    this.load.image("arrow", "assets/mais.png");
+    this.load.image("arrow2", "assets/menos.png");
+    this.load.image("lda", "assets/lda.png");
     this.load.image("alvo", "assets/alvo.png");
     this.load.image("relogio", "assets/relogio.png");
     jogar = false;
@@ -30,30 +32,31 @@ start.create = function() {
     botao = this.physics.add
         .sprite(512, 312, "click")
         .setInteractive()
-        .setScale(0.3)
+        .setScale(1)
         .on("pointerdown", pointer);
     botaodown = this.physics.add
-        .sprite(874, 300, "arrow")
+        .sprite(600, 450, "arrow2")
         .setInteractive()
-        .setScale(0.05)
+        .setScale(0.7)
         .setAngle(180)
         .on("pointerdown", scoredown);
     botaoup = this.physics.add
-        .sprite(874, 260, "arrow")
+        .sprite(600, 385, "arrow")
         .setInteractive()
-        .setScale(0.05)
+        .setScale(0.5)
         .on("pointerdown", scoreup);
     cursors = this.input.keyboard.createCursorKeys();
-    this.add.sprite(835, 280, "alvo").setScale(0.1);
+    this.add.sprite(600, 420, "alvo").setScale(0.1);
     this.add
-        .sprite(835, 200, "relogio")
+        .sprite(420, 420, "relogio")
         .setScale(0.027)
         .setInteractive()
         .on("pointerdown", changetime);
-    temposhow = this.add.text(825, 193, tempo / 1000 + "s", {
+    this.add.sprite(500, 50, "lda");
+    temposhow = this.add.text(405, 412, tempo / 1000 + "s", {
         fontFamily: "ComicSans"
     });
-    pontosshow = this.add.text(828, 273, pontos, {
+    pontosshow = this.add.text(596, 412, pontos, {
         fontFamily: "ComicSans"
     });
 };

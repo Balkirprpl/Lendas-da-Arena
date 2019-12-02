@@ -25,6 +25,8 @@ var xdiagnegativo = -113.137;
 var boosttime = 0;
 var temposla = 0;
 
+var mano = 0
+
 //max score win
 var player1win;
 var tie;
@@ -63,14 +65,15 @@ var platforms;
 
 //tiro
 var playerBullets;
-var enemyBullets;
 var hittarget;
 var hitwall;
 var ammo = 6;
-var ammoshow;
+var ammoshow = 6;
+var ammosheet;
 var reload = false;
 var reloadtime = 176;
 var reloadshow;
+var firstshoot = true;
 //reticula
 var reticle;
 
@@ -82,13 +85,33 @@ var Bullet = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
 
     initialize: function Bullet(scene) {
-        Phaser.GameObjects.Image.call(this, scene, 0, 0, "star");
-        this.speed = 1;
-        this.born = 0;
-        this.direction = 0;
-        this.xSpeed = 0;
-        this.ySpeed = 0;
-        this.setSize(30, 30, true);
+        if (firstshoot)
+        {
+            Phaser.GameObjects.Image.call(this, scene, -20, -20, "star");
+            this.speed = 0.8;
+            this.born = 0;
+            this.direction = 0;
+            this.xSpeed = 0;
+            this.ySpeed = 0;
+            this.setSize(15, 15);
+            this.setScale(0.17);
+            this.setOrigin(3);
+            firstshoot = false;
+        }
+
+        else
+        {
+            Phaser.GameObjects.Image.call(this, scene, -20, -20, "starblue");
+            this.speed = 0.3;
+            this.born = -300;
+            this.direction = 0;
+            this.xSpeed = 0;
+            this.ySpeed = 0;
+            this.setSize(15, 15);
+            this.setScale(0.17);
+            this.setOrigin(3);
+            firstshoot = true;
+            }
     },
 
     // Fires a bullet from the player to the reticle
@@ -105,8 +128,8 @@ var Bullet = new Phaser.Class({
             this.ySpeed = -this.speed * Math.cos(this.direction);
         }
 
-        this.rotation = shooter.rotation; // angle bullet with shooters rotation
-        this.born = 0; // Time since new bullet spawned
+        this.rotation = Phaser.Math.Angle.Between(player.x, player.y, reticle.x, reticle.y) - 55; // angle bullet with shooters rotation
+        //this.born = 0; // Time since new bullet spawned
     },
 
     // Updates the position of the bullet each cycle
@@ -124,6 +147,7 @@ var Bullet = new Phaser.Class({
             this.destroy();
         }
     }
+
 });
 
 main.preload = function() {
@@ -131,6 +155,7 @@ main.preload = function() {
     this.load.image("mapa1", "assets/mapa1.png");
     this.load.image("ground", "assets/platform.png");
     this.load.image("star", "assets/star.png");
+    this.load.image("starblue", "assets/starblue.png");
     this.load.image("bomb", "assets/bomb.png");
     this.load.image("groundvertshort", "assets/platformvertshort.png");
     this.load.image("groundvert", "assets/platformvert.png");
@@ -139,6 +164,9 @@ main.preload = function() {
     this.load.spritesheet("dude", "assets/dude2.png", {
         frameWidth: 17,
         frameHeight: 20
+    });this.load.spritesheet("ammosheet", "assets/ammosheet.png", {
+        frameWidth: 310,
+        frameHeight: 724
     });
     this.load.image("pilar1", "assets/pilar1.png");
     this.load.image("pilar2", "assets/pilar2.png");
@@ -158,8 +186,8 @@ main.preload = function() {
         frameWidth: 64,
         frameHeight: 64
     });
-    this.load.audio("footstep", "assets/footstep.mp3");
-    this.load.audio("music", "assets/music.mp3");
+    //this.load.audio("footstep", "assets/footstep.mp3");
+    //this.load.audio("music", "assets/music.mp3");
 
     scorep1 = 0;
     scorep2 = 0;
@@ -186,10 +214,6 @@ main.create = function() {
         classType: Bullet,
         runChildUpdate: true
     });
-    enemyBullets = this.physics.add.group({
-        classType: Bullet,
-        runChildUpdate: true
-    });
 
     this.input.on(
         "pointerdown",
@@ -202,10 +226,9 @@ main.create = function() {
             if (bullet && ammo >= 1 && !reload && ingame) {
                 bullet.fire(player, reticle);
                 ammo = ammo - 1;
-                ammoshow.setText("Munição:" + ammo);
+                ammosheet.setFrame(ammo)
             }
-        },
-        this
+        }
     );
 
     this.input.on("pointerdown", function() {
@@ -291,6 +314,7 @@ main.create = function() {
     lake.create(485, 500, "lakeb");
     lake.create(513, 553, "lakec");
     this.add.image(512, 310, "mapa1");
+    ammosheet = this.add.image(980, 470, 'ammosheet').setScale(0.15);
 
     //Fullscreen
     var button = this.add
@@ -328,10 +352,10 @@ main.create = function() {
     );
 
     //munição txt
-    ammoshow = this.add.text(934, 430, "Munição:" + ammo, {
+    /*ammoshow = this.add.text(934, 430, "Munição:" + ammo, {
         fontSize: "16px",
         fill: "#ffffff"
-    });
+    });*/
 
     reloadshow = this.add.text(934, 450, "", {
         fontSize: "16px",
@@ -355,6 +379,18 @@ main.create = function() {
         fill: "#ffffff"
     });
     //animações
+
+    //ammo
+    this.anims.create({
+        key: "municaoanim",
+        frames: this.anims.generateFrameNumbers("ammosheet", {
+            start: 0,
+            end: 6
+        }),
+        frameRate: 5,
+        repeat: -1
+    });
+    ammosheet.setFrame(ammo);
     //player1 carinha
     this.anims.create({
         key: "busy",
@@ -426,7 +462,8 @@ main.create = function() {
         timer = {
             text: this.add.text(480, 30, tempo / 1000, {
                 fontSize: "32px",
-                fill: "#000"
+                fill: "#000",
+                fontFamily: 'Arial'
             }),
             event: this.time.addEvent({
                 delay: tempo,
@@ -511,7 +548,6 @@ main.update = function() {
     //fim
 
     //player 2
-
     if (cursors.up.isDown && cursors.left.isDown) {
         player.setVelocityX(-113.137);
         player.setVelocityY(-113.137);
@@ -591,17 +627,15 @@ main.update = function() {
             ammo = 6;
             reloadtime = 176;
             reload = false;
-            ammoshow.setText("Munição:" + ammo);
-            reloadshow.setText("");
+            ammosheet.setFrame(ammo);
         } else if (reloadtime <= 58) {
-            reloadshow.setText("1");
+            ammosheet.setFrame(6);
         } else if (reloadtime <= 116) {
-            reloadshow.setText("2");
+            ammosheet.setFrame(4);
         } else if (reloadtime <= 175) {
-            reloadshow.setText("3");
+            ammosheet.setFrame(2);
         }
     }
-    console.log(scorep1,scorep2)
 };
 
 function hitparede() {
@@ -612,8 +646,10 @@ function colisao() {
     player2.setPosition(100, 340);
     player.setPosition(924, 340);
     player2life = 3;
-    scorep2++;
-    score2.setText(scorep2);
+    ammo = 6;
+    player2scored();
+    player2lifeshow.setText("Vida:" + player2life);
+    //ammoshow.setText("Munição:" + ammo);
 }
 
 function hit() {
@@ -624,10 +660,23 @@ function hit() {
         player2.setPosition(100, 340);
         player.setPosition(924, 340);
         player2life = 3;
-        scorep1++;
-        score1.setText(scorep1);
+        ammo = 6;
+        player1scored();
         player2lifeshow.setText("Vida:" + player2life);
+        //ammoshow.setText("Munição:" + ammo);
     }
+}
+
+function player1scored()
+{
+    scorep1 = scorep1 + 1;
+    score1.setText(scorep1);
+}
+
+function player2scored()
+{
+    scorep2 = scorep2 + 1;
+    score2.setText(scorep2);
 }
 
 function gamewin() {

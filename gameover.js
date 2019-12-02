@@ -14,8 +14,8 @@ var gameover = new Phaser.Scene("gameOver");
 
 gameover.preload = function () 
 {
-    this.load.image('player2w', 'assets/Rellekkaosrs.png');
-    this.load.image('player1w', 'assets/Rellekkars3.png');
+    this.load.image('player2w', 'assets/win2.png');
+    this.load.image('player1w', 'assets/win1.png');
     this.load.image("click", "assets/cliqueaqui.png");
     jogarnovamente = false;
 }
