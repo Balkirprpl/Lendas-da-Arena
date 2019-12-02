@@ -56,6 +56,8 @@ var player;
 var player2;
 var player2life = 3;
 var player2lifeshow;
+var heart;
+var heartshow = 0;
 
 //mapa
 var pilars;
@@ -87,9 +89,9 @@ var Bullet = new Phaser.Class({
     initialize: function Bullet(scene) {
         if (firstshoot)
         {
-            Phaser.GameObjects.Image.call(this, scene, -20, -20, "star");
-            this.speed = 0.8;
-            this.born = 0;
+            Phaser.GameObjects.Image.call(this, scene, -20, -20, "starblue");
+            this.speed = 0.6;
+            this.born = -100;
             this.direction = 0;
             this.xSpeed = 0;
             this.ySpeed = 0;
@@ -101,9 +103,9 @@ var Bullet = new Phaser.Class({
 
         else
         {
-            Phaser.GameObjects.Image.call(this, scene, -20, -20, "starblue");
-            this.speed = 0.3;
-            this.born = -300;
+            Phaser.GameObjects.Image.call(this, scene, -20, -20, "star");
+            this.speed = 0.4;
+            this.born = -600;
             this.direction = 0;
             this.xSpeed = 0;
             this.ySpeed = 0;
@@ -164,9 +166,14 @@ main.preload = function() {
     this.load.spritesheet("dude", "assets/dude2.png", {
         frameWidth: 17,
         frameHeight: 20
-    });this.load.spritesheet("ammosheet", "assets/ammosheet.png", {
+    });
+    this.load.spritesheet("ammosheet", "assets/ammosheet.png", {
         frameWidth: 310,
         frameHeight: 724
+    });
+    this.load.spritesheet("heart", "assets/heart.png", {
+        frameWidth: 285,
+        frameHeight: 94
     });
     this.load.image("pilar1", "assets/pilar1.png");
     this.load.image("pilar2", "assets/pilar2.png");
@@ -315,6 +322,7 @@ main.create = function() {
     lake.create(513, 553, "lakec");
     this.add.image(512, 310, "mapa1");
     ammosheet = this.add.image(980, 470, 'ammosheet').setScale(0.15);
+    heart = this.add.image(40, 425, 'heart').setScale(0.2);
 
     //Fullscreen
     var button = this.add
@@ -362,10 +370,10 @@ main.create = function() {
         fill: "#ffffff"
     });
     //vida player2
-    player2lifeshow = this.add.text(10, 430, "Vida:" + player2life, {
+    /*player2lifeshow = this.add.text(10, 430, "Vida:" + player2life, {
         fontSize: "16px",
         fill: "#ffffff"
-    });
+    });*/
 
     //placares
     score2 = this.add.text(50, 200, scorep2, {
@@ -380,15 +388,22 @@ main.create = function() {
     });
     //animações
 
+
+    //corações
+    this.anims.create({
+        key: "coracoes",
+        frames: this.anims.generateFrameNumbers("heart", {
+            start: 0,
+            end: 2
+        }),
+    });
     //ammo
     this.anims.create({
         key: "municaoanim",
         frames: this.anims.generateFrameNumbers("ammosheet", {
             start: 0,
             end: 6
-        }),
-        frameRate: 5,
-        repeat: -1
+        })
     });
     ammosheet.setFrame(ammo);
     //player1 carinha
@@ -648,22 +663,39 @@ function colisao() {
     player2life = 3;
     ammo = 6;
     player2scored();
-    player2lifeshow.setText("Vida:" + player2life);
+    ammosheet.setFrame(ammo);
+    //player2lifeshow.setText("Vida:" + player2life);
     //ammoshow.setText("Munição:" + ammo);
 }
 
 function hit() {
     hittarget = true;
-    player2life = player2life - 1;
-    player2lifeshow.setText("Vida:" + player2life);
-    if (player2life <= 0) {
+    //player2lifeshow.setText("Vida:" + player2life);
+    if (player2life === 0) {
         player2.setPosition(100, 340);
         player.setPosition(924, 340);
         player2life = 3;
         ammo = 6;
+        ammosheet.setFrame(ammo)
         player1scored();
-        player2lifeshow.setText("Vida:" + player2life);
-        //ammoshow.setText("Munição:" + ammo);
+        //player2lifeshow.setText("Vida:" + player2life);
+        heart.setFrame(0);
+    }
+    else if (player2life === 1)
+    {
+        //player2lifeshow.setText("Vida:" + player2life);
+        heart.setFrame(2);
+        player2life = player2life - 1;
+    }
+    else if (player2life === 2)
+    {
+        //player2lifeshow.setText("Vida:" + player2life);
+        heart.setFrame(1);
+        player2life = player2life - 1;
+    }
+    else if (player2life === 3)
+    {
+        player2life = player2life - 1;
     }
 }
 

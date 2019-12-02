@@ -38,8 +38,6 @@ gameover.update = function ()
     {
         this.scene.start(start);
     }
-
-    console.log(scorep1,scorep2)
 }
 
 function playagain()

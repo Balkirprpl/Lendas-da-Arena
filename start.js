@@ -20,7 +20,6 @@ start.preload = function() {
     this.load.image("click", "assets/botao1.png");
     this.load.image("arrow", "assets/mais.png");
     this.load.image("arrow2", "assets/menos.png");
-    this.load.image("lda", "assets/lda.png");
     this.load.image("alvo", "assets/alvo.png");
     this.load.image("relogio", "assets/relogio.png");
     jogar = false;
@@ -52,7 +51,6 @@ start.create = function() {
         .setScale(0.027)
         .setInteractive()
         .on("pointerdown", changetime);
-    this.add.sprite(500, 50, "lda");
     temposhow = this.add.text(405, 412, tempo / 1000 + "s", {
         fontFamily: "ComicSans"
     });
