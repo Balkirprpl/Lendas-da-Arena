@@ -9,7 +9,7 @@ var cursors;
 var jogar = false;
 var pontos = 5;
 var pontosshow;
-var tempo = 30000;
+var tempo = 60000;
 var temposhow;
 var botaoup;
 var botaodown;

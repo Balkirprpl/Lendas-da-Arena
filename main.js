@@ -679,6 +679,7 @@ main.update = function() {
         xdiag = 601.04;
         xdiagnegativo = -601.04;
         temposla++;
+        player2.setTint(0xffffff);
         if (temposla > 5) {
             boosttime = 0;
             temposla = 0;
@@ -688,7 +689,11 @@ main.update = function() {
         xnegativo = -160;
         xdiag = 113.137;
         xdiagnegativo = -113.137;
-        boosttime++;
+        player2.clearTint();
+        if (boosttime <= 100)
+        {
+            boosttime ++;
+        };
     }
 
     //reload
@@ -722,12 +727,17 @@ function colisao() {
     ammo = 6;
     player2scored();
     ammosheet.setFrame(ammo);
+    boosttime = 0;
     //player2lifeshow.setText("Vida:" + player2life);
     //ammoshow.setText("Munição:" + ammo);
 }
 
 function hit() {
     hittarget = true;
+    if (hittarget)
+    {
+        player2life = player2life -1;
+    }
     //player2lifeshow.setText("Vida:" + player2life);
     if (player2life === 0) {
         player2.setPosition(100, 340);
@@ -736,6 +746,7 @@ function hit() {
         ammo = 6;
         ammosheet.setFrame(ammo)
         player1scored();
+        boosttime = 0;
         //player2lifeshow.setText("Vida:" + player2life);
         heart.setFrame(0);
     }
@@ -743,17 +754,13 @@ function hit() {
     {
         //player2lifeshow.setText("Vida:" + player2life);
         heart.setFrame(2);
-        player2life = player2life - 1;
+        //player2life = player2life - 1;
     }
     else if (player2life === 2)
     {
         //player2lifeshow.setText("Vida:" + player2life);
         heart.setFrame(1);
-        player2life = player2life - 1;
-    }
-    else if (player2life === 3)
-    {
-        player2life = player2life - 1;
+        //player2life = player2life - 1;
     }
 }
 
@@ -761,12 +768,14 @@ function player1scored()
 {
     scorep1 = scorep1 + 1;
     score1.setText(scorep1);
+    player2life = 3;
 }
 
 function player2scored()
 {
     scorep2 = scorep2 + 1;
     score2.setText(scorep2);
+    player2life = 3;
 }
 
 function gamewin() {
