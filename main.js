@@ -79,6 +79,16 @@ var firstshoot = true;
 //reticula
 var reticle;
 
+//tocha
+var tocha1;
+var tocha2;
+var tocha3;
+var tocha4;
+
+//bandeiras
+var flag1;
+var flag2;
+
 var button;
 
 var main = new Phaser.Scene("Main");
@@ -174,6 +184,14 @@ main.preload = function() {
     this.load.spritesheet("heart", "assets/heart.png", {
         frameWidth: 285,
         frameHeight: 94
+    });
+    this.load.spritesheet("tocha", "assets/tocha.png", {
+        frameWidth: 14,
+        frameHeight: 30
+    });
+    this.load.spritesheet("flag", "assets/flag.png", {
+        frameWidth: 38,
+        frameHeight: 44
     });
     this.load.image("pilar1", "assets/pilar1.png");
     this.load.image("pilar2", "assets/pilar2.png");
@@ -323,6 +341,12 @@ main.create = function() {
     this.add.image(512, 310, "mapa1");
     ammosheet = this.add.image(980, 470, 'ammosheet').setScale(0.15);
     heart = this.add.image(40, 425, 'heart').setScale(0.2);
+    tocha1 = this.add.sprite(32, 300, 'tocha');
+    tocha2 = this.add.sprite(992, 300, 'tocha');
+    tocha3 = this.add.sprite(288, 44, 'tocha');
+    tocha4 = this.add.sprite(736, 44, 'tocha');
+    flag1 = this.add.sprite(417, 46, 'flag');
+    flag2 = this.add.sprite(607, 46, 'flag');
 
     //Fullscreen
     var button = this.add
@@ -397,13 +421,39 @@ main.create = function() {
             end: 2
         }),
     });
+
+    //tocha
+    this.anims.create({
+        key: "tocha",
+        frames: this.anims.generateFrameNumbers("tocha", {
+            start: 0,
+            end: 10
+        }),
+        frameRate: 10,
+        repeat: -1
+    });
+    
+    //bandeira
+    this.anims.create({
+        key: "flag",
+        frames: this.anims.generateFrameNumbers("flag", {
+            start: 0,
+            end: 7
+        }),
+        frameRate: 10,
+        repeat: -1,
+        repeatDelay: 3000
+    });
+
     //ammo
     this.anims.create({
         key: "municaoanim",
         frames: this.anims.generateFrameNumbers("ammosheet", {
             start: 0,
             end: 6
-        })
+        }),
+        frameRate: 10,
+        repeat: -1
     });
     ammosheet.setFrame(ammo);
     //player1 carinha
@@ -487,6 +537,15 @@ main.create = function() {
             })
         };
     }
+
+    //dar play nas animações das tochas
+    tocha1.anims.play("tocha", true);
+    tocha2.anims.play("tocha", true);
+    tocha3.anims.play("tocha", true);
+    tocha4.anims.play("tocha", true);
+
+    flag1.anims.play("flag", true);
+    flag2.anims.play('flag', true);
 };
 
 main.update = function() {
@@ -561,7 +620,6 @@ main.update = function() {
         passos = false;
     }
     //fim
-
     //player 2
     if (cursors.up.isDown && cursors.left.isDown) {
         player.setVelocityX(-113.137);
