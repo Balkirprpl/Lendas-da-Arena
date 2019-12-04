@@ -69,6 +69,7 @@ var platforms;
 var playerBullets;
 var hittarget;
 var hitwall;
+var uptohit = true;
 var ammo = 6;
 var ammoshow = 6;
 var ammosheet;
@@ -157,6 +158,7 @@ var Bullet = new Phaser.Class({
             hittarget = false;
             hitwall = false;
             this.destroy();
+            uptohit = true
         }
     }
 
@@ -499,7 +501,7 @@ main.create = function() {
     });
 
     //retícula
-    reticle = this.physics.add.sprite(900, 300, "bomb");
+    reticle = this.physics.add.sprite(900, 300, "bomb").setScale(0.07);
     reticle.setCollideWorldBounds(true);
 
     //cursores setinhas
@@ -679,7 +681,6 @@ main.update = function() {
         xdiag = 601.04;
         xdiagnegativo = -601.04;
         temposla++;
-        player2.setTint(0xffffff);
         if (temposla > 5) {
             boosttime = 0;
             temposla = 0;
@@ -714,6 +715,11 @@ main.update = function() {
             ammosheet.setFrame(2);
         }
     }
+
+    if (!uptohit)
+    {
+        player2.setTint(0xffff00);
+    }
 };
 
 function hitparede() {
@@ -734,12 +740,9 @@ function colisao() {
 
 function hit() {
     hittarget = true;
-    if (hittarget)
-    {
-        player2life = player2life -1;
-    }
+    
     //player2lifeshow.setText("Vida:" + player2life);
-    if (player2life === 0) {
+    if (player2life === 1 && uptohit) {
         player2.setPosition(100, 340);
         player.setPosition(924, 340);
         player2life = 3;
@@ -747,20 +750,21 @@ function hit() {
         ammosheet.setFrame(ammo)
         player1scored();
         boosttime = 0;
-        //player2lifeshow.setText("Vida:" + player2life);
         heart.setFrame(0);
+        uptohit = false;
     }
-    else if (player2life === 1)
+    else if (player2life === 2 && uptohit)
     {
-        //player2lifeshow.setText("Vida:" + player2life);
         heart.setFrame(2);
-        //player2life = player2life - 1;
+        player2life = player2life - 1;
+        uptohit = false;
     }
-    else if (player2life === 2)
+    else if (player2life === 3 && uptohit)
     {
         //player2lifeshow.setText("Vida:" + player2life);
         heart.setFrame(1);
-        //player2life = player2life - 1;
+        player2life = player2life - 1;
+        uptohit = false;
     }
 }
 
