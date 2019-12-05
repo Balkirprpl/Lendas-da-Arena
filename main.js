@@ -170,7 +170,11 @@ main.preload = function() {
     this.load.image("ground", "assets/platform.png");
     this.load.image("star", "assets/star.png");
     this.load.image("starblue", "assets/starblue.png");
-    this.load.image("bomb", "assets/bomb.png");
+    //this.load.image("bomb", "assets/bomb.png");
+    this.load.spritesheet("bomb", "assets/bomb.png", {
+        frameWidth: 148,
+        frameHeight: 168
+    });
     this.load.image("groundvertshort", "assets/platformvertshort.png");
     this.load.image("groundvert", "assets/platformvert.png");
     this.load.image("paredegeral", "assets/mapa1.png");
@@ -414,6 +418,16 @@ main.create = function() {
     });
     //animações
 
+    //reticle
+    this.anims.create({
+        key: "bomb",
+        frames: this.anims.generateFrameNumbers("bomb", {
+            start: 0,
+            end: 14
+        }),
+        frameRate: 12,
+        repeat: -1
+    });
 
     //corações
     this.anims.create({
@@ -501,7 +515,7 @@ main.create = function() {
     });
 
     //retícula
-    reticle = this.physics.add.sprite(900, 300, "bomb").setScale(0.07);
+    reticle = this.physics.add.sprite(512, 310, "bomb").setScale(0.2);
     reticle.setCollideWorldBounds(true);
 
     //cursores setinhas
@@ -548,6 +562,8 @@ main.create = function() {
 
     flag1.anims.play("flag", true);
     flag2.anims.play('flag', true);
+
+    reticle.anims.play('bomb', true);
 };
 
 main.update = function() {
@@ -715,11 +731,6 @@ main.update = function() {
             ammosheet.setFrame(2);
         }
     }
-
-    if (!uptohit)
-    {
-        player2.setTint(0xffff00);
-    }
 };
 
 function hitparede() {
@@ -740,6 +751,7 @@ function colisao() {
 
 function hit() {
     hittarget = true;
+    player2.setTint(0xffff00);
     
     //player2lifeshow.setText("Vida:" + player2life);
     if (player2life === 1 && uptohit) {
