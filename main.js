@@ -1,5 +1,5 @@
 import { gameover } from "./gameover.js";
-import { tempo, pontos } from "./start.js";
+import { tempo, pontos, music } from "./start.js";
 
 console.log("main.js loaded!");
 
@@ -24,7 +24,6 @@ var xnegativo = -160;
 var xdiagnegativo = -113.137;
 var boosttime = 0;
 var temposla = 0;
-
 var mano = 0
 
 //max score win
@@ -90,6 +89,7 @@ var tocha4;
 var flag1;
 var flag2;
 
+var mute = false;
 var button;
 
 var main = new Phaser.Scene("Main");
@@ -142,7 +142,6 @@ var Bullet = new Phaser.Class({
         }
 
         this.rotation = Phaser.Math.Angle.Between(player.x, player.y, reticle.x, reticle.y) - 55; // angle bullet with shooters rotation
-        //this.born = 0; // Time since new bullet spawned
     },
 
     // Updates the position of the bullet each cycle
@@ -152,9 +151,7 @@ var Bullet = new Phaser.Class({
         this.born += delta;
 
         if (this.born > 300 || hittarget || hitwall) {
-            //this.setActive(false);
-            //this.setVisible(false);
-            //this.body.setEnable(false);
+          
             hittarget = false;
             hitwall = false;
             this.destroy();
@@ -170,7 +167,6 @@ main.preload = function() {
     this.load.image("ground", "assets/platform.png");
     this.load.image("star", "assets/star.png");
     this.load.image("starblue", "assets/starblue.png");
-    //this.load.image("bomb", "assets/bomb.png");
     this.load.spritesheet("bomb", "assets/bomb.png", {
         frameWidth: 148,
         frameHeight: 168
@@ -218,7 +214,6 @@ main.preload = function() {
         frameHeight: 64
     });
     //this.load.audio("footstep", "assets/footstep.mp3");
-    //this.load.audio("music", "assets/music.mp3");
 
     scorep1 = 0;
     scorep2 = 0;
@@ -226,7 +221,7 @@ main.preload = function() {
     player2life = 3;
 };
 
-main.create = function() {
+main.create = function(){
     //  A simple background for our game
     this.add.image(512, 310, "mapa");
     //limite tela
@@ -265,6 +260,20 @@ main.create = function() {
     this.input.on("pointerdown", function() {
         main.input.mouse.requestPointerLock();
         ingame = true;
+    });
+
+    
+    this.input.keyboard.on('keydown_M', function(){
+        if(mute)
+        {
+            music.play();
+            mute = false;
+        }
+        else
+        {
+            music.stop();
+            mute = true;
+        }
     });
 
     this.input.keyboard.on(
@@ -389,22 +398,6 @@ main.create = function() {
         this
     );
 
-    //munição txt
-    /*ammoshow = this.add.text(934, 430, "Munição:" + ammo, {
-        fontSize: "16px",
-        fill: "#ffffff"
-    });*/
-
-    reloadshow = this.add.text(934, 450, "", {
-        fontSize: "16px",
-        fill: "#ffffff"
-    });
-    //vida player2
-    /*player2lifeshow = this.add.text(10, 430, "Vida:" + player2life, {
-        fontSize: "16px",
-        fill: "#ffffff"
-    });*/
-
     //placares
     score2 = this.add.text(50, 200, scorep2, {
         fontSize: "32px",
@@ -524,8 +517,6 @@ main.create = function() {
     //  Colisões
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(player, pilars);
-    //this.physics.add.collider(star, platforms);
-    //this.physics.add.collider(bombs, platforms);
     this.physics.add.collider(player, lake);
     this.physics.add.collider(player2, lake);
     this.physics.add.collider(player2, platforms);
@@ -633,7 +624,6 @@ main.update = function() {
         player2.setVelocityY(x);
         passos = true;
     } else {
-        //player.setVelocityX(0);
         player2.setVelocityY(0);
         passos = false;
     }
@@ -745,15 +735,12 @@ function colisao() {
     player2scored();
     ammosheet.setFrame(ammo);
     boosttime = 0;
-    //player2lifeshow.setText("Vida:" + player2life);
-    //ammoshow.setText("Munição:" + ammo);
 }
 
 function hit() {
     hittarget = true;
     player2.setTint(0xffff00);
     
-    //player2lifeshow.setText("Vida:" + player2life);
     if (player2life === 1 && uptohit) {
         player2.setPosition(100, 340);
         player.setPosition(924, 340);
@@ -773,7 +760,6 @@ function hit() {
     }
     else if (player2life === 3 && uptohit)
     {
-        //player2lifeshow.setText("Vida:" + player2life);
         heart.setFrame(1);
         player2life = player2life - 1;
         uptohit = false;
@@ -796,6 +782,7 @@ function player2scored()
 
 function gamewin() {
     main.input.mouse.releasePointerLock();
+    music.stop();
     main.scene.start(gameover);
 }
 
